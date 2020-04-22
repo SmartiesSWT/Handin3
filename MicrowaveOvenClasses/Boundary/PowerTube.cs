@@ -14,11 +14,12 @@ namespace MicrowaveOvenClasses.Boundary
             myOutput = output;
         }
 
+        //Lavet en ændring så mikrobølgeoven nu tager imellem 50-700W istedet for 1-100%.
         public void TurnOn(int power)
         {
-            if (power < 1 || 100 < power)
+            if (power < 50 || 700 < power)
             {
-                throw new ArgumentOutOfRangeException("power", power, "Must be between 1 and 100 (incl.)");
+                throw new ArgumentOutOfRangeException("power", power, "Must be between 50W and 700W (incl.)");
             }
 
             if (IsOn)
