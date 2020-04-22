@@ -39,30 +39,33 @@ namespace Microwave.Test.Unit
             Assert.That(!pause.WaitOne(900));
         }
 
+        //Start() er skiftet fra 2000 til 2
         [Test]
         public void Start_TimerExpires_ShortEnough()
         {
             ManualResetEvent pause = new ManualResetEvent(false);
 
             uut.Expired += (sender, args) => pause.Set();
-            uut.Start(2000);
+            uut.Start(2);
 
             // wait for expiration, but not much longer, should come
             Assert.That(pause.WaitOne(2100));
         }
 
+        //Start() er skiftet fra 2000 til 2
         [Test]
         public void Start_TimerExpires_LongEnough()
         {
             ManualResetEvent pause = new ManualResetEvent(false);
 
             uut.Expired += (sender, args) => pause.Set();
-            uut.Start(2000);
+            uut.Start(2);
 
             // wait shorter than expiration, shouldn't come
             Assert.That(!pause.WaitOne(1900));
         }
 
+        //Start() er skiftet fra 2000 til 2, for at sikre at de er eqaul
         [Test]
         public void Start_TimerTick_CorrectNumber()
         {
@@ -72,7 +75,7 @@ namespace Microwave.Test.Unit
             uut.Expired += (sender, args) => pause.Set();
             uut.TimerTick += (sender, args) => notifications++;
 
-            uut.Start(2000);
+            uut.Start(2);
 
             // wait longer than expiration
             Assert.That(pause.WaitOne(2100));

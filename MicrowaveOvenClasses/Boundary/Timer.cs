@@ -39,11 +39,12 @@ namespace MicrowaveOvenClasses.Boundary
             Expired?.Invoke(this, System.EventArgs.Empty);
         }
 
+        //Lavet så den kun tæller 1 sekund ned af gangen istedet for 1000.
         private void OnTimerEvent(object sender, System.Timers.ElapsedEventArgs args)
         {
             // One tick has passed
             // Do what I should
-            TimeRemaining -= 1000;
+            TimeRemaining -= 1;
             TimerTick?.Invoke(this, EventArgs.Empty);
 
             if (TimeRemaining <= 0)
