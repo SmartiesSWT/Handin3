@@ -55,7 +55,7 @@ namespace Microwave.Test.Integration
         [TestCase(-1)]
         [TestCase(49)]
         [TestCase(701)]
-        public void CookController_TurnOnThrowsExeptionIfPowerIsOutOfRangePowerTube(int power)
+        public void CookController_TurnOnThrowsExceptionIfPowerIsOutOfRangePowerTube(int power)
         {
             Assert.That(() => _cookController.StartCooking(power,60), Throws.TypeOf<ArgumentOutOfRangeException>());
         }
@@ -64,7 +64,7 @@ namespace Microwave.Test.Integration
         [TestCase(50)]
         [TestCase(150)]
         [TestCase(700)]
-        public void CookController_TurnOnThrowsExeptionIfPowerIsAlreadyOnPowerTube(int power)
+        public void CookController_TurnOnThrowsExceptionIfPowerIsAlreadyOnPowerTube(int power)
         {
             _cookController.StartCooking(power, 60);
             Assert.That(() => _cookController.StartCooking(power, 60), Throws.TypeOf<ApplicationException>());
@@ -81,33 +81,36 @@ namespace Microwave.Test.Integration
         }
 
 
-        //[TestCase(5)]
-        //[TestCase(25)]
-        //[TestCase(50)]
-        //public void CookController_GetTimeRemainingTimer(int time)
-        //{
-        //    _timer.TimerTick += Raise.EventWith(new T);
-        //}
+
+        [Test]
+        public void CookController_GetTimeRemainingTimer()
+        {
+            _cookController.StartCooking(50, 60);
+            System.Threading.Thread.Sleep(1050);
+            _output.Received().OutputLine(Arg.Is<string>(s => s.Contains("Display shows: 00:59")));
+        }
 
 
-        //[TestCase(5)]
-        //[TestCase(25)]
-        //[TestCase(50)]
-        //public void CookController_ShowTimeDisplay(int time)
-        //{
-        //    _cookController.StartCooking(100, time);
-        //    Assert.That(_timer.TimeRemaining, Is.EqualTo(time));
-        //}
+        //Vi ved godt dette er noget fis, men gør det for at drille Lasse
+        [TestCase(0,10)]
+        [TestCase(0,30)]
+        [TestCase(1,50)]
+        public void CookController_ShowTimeDisplay(int min, int sec)
+        {
+            _display.ShowTime(min, sec);
+            _output.Received().OutputLine(Arg.Is<string>(s => s.Contains($"Display shows: {min:D2}:{sec:D2}")));
+        }
 
 
-        //[TestCase(5)]
-        //[TestCase(25)]
-        //[TestCase(50)]
-        //public void CookController_CookingIsDoneUserInterface(int time)
-        //{
-        //    _cookController.StartCooking(100, time);
-        //    Assert.That(_timer.TimeRemaining, Is.EqualTo(time));
-        //}
+
+        [Test]
+        public void CookController_OnTimerExpiredTimer()
+        {
+            _cookController.StartCooking(50, 1);
+            System.Threading.Thread.Sleep(1500);
+            _output.Received().OutputLine(Arg.Is<string>(s => s.Contains("PowerTube turned off")));
+        }
+
 
 
         [TestCase(50)]
@@ -118,6 +121,16 @@ namespace Microwave.Test.Integration
             _cookController.StartCooking(power, 60);
             _cookController.Stop();
             _output.Received().OutputLine(Arg.Is<string>(s => s.Contains("PowerTube turned off")));
+        }
+
+
+
+        //Extentions (Andre extentions er testet tidligere)
+        [Test]
+        public void CookController_ExtentionStopTimer()
+        {
+            _cookController.Stop();
+            _output.DidNotReceive().OutputLine(Arg.Is<string>(s => s.Contains("PowerTube turned off")));
         }
     }
 }
